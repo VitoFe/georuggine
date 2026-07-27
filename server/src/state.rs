@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fs::{self, OpenOptions};
 use std::io::{Write, BufRead, BufReader};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::mpsc::Sender;
 use chrono::{DateTime, Utc};
 use common::{Coordinate, UserStatus, ServerMessage};
@@ -248,7 +248,7 @@ impl ServerState {
     }
 
     fn save_trajectory_point(&self, username: &str, time: DateTime<Utc>, coord: Coordinate, status: UserStatus) {
-        let filepath = format!("{}/{}.jsonl", self.trajectories_dir, username);
+        let filepath = PathBuf::from(&self.trajectories_dir).join(format!("{}.jsonl", username));
         if let Ok(mut file) = OpenOptions::new()
             .create(true)
             .append(true)
