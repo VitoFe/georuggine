@@ -130,7 +130,7 @@ fn handle_client(stream: TcpStream, state: Arc<Mutex<ServerState>>, running: Arc
                 let mut s = state.lock().unwrap_or_else(|e| e.into_inner());
                 match client_msg {
                     ClientMessage::Register { username, password } => {
-                        let success = s.register(username.clone(), password);
+                        let success = s.register(username, password);
                         let response = ServerMessage::AuthResponse {
                             success,
                             message: if success {
@@ -296,9 +296,6 @@ fn run_server_cli(state: Arc<Mutex<ServerState>>, running: Arc<AtomicBool>) {
                 }
 
                 let parts: Vec<&str> = cmd.split_whitespace().collect();
-                if parts.is_empty() {
-                    continue;
-                }
 
                 match parts[0] {
                     "list" => {
@@ -322,7 +319,7 @@ fn run_server_cli(state: Arc<Mutex<ServerState>>, running: Arc<AtomicBool>) {
                         
                         let msg = ServerMessage::TextMessage {
                             sender: "Server (DM)".to_string(),
-                            text: message.clone(),
+                            text: message,
                         };
 
                         let mut s = state.lock().unwrap_or_else(|e| e.into_inner());
@@ -340,7 +337,7 @@ fn run_server_cli(state: Arc<Mutex<ServerState>>, running: Arc<AtomicBool>) {
                         let message = parts[1..].join(" ");
                         let msg = ServerMessage::TextMessage {
                             sender: "Server (Broadcast)".to_string(),
-                            text: message.clone(),
+                            text: message,
                         };
 
                         let mut s = state.lock().unwrap_or_else(|e| e.into_inner());
